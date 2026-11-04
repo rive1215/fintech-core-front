@@ -42,7 +42,6 @@ export function LoginPage() {
       void navigate('/app', { replace: true });
     } catch (error: unknown) {
       if (!(error instanceof AppError)) {
-        // useAuth ya normaliza; defensivo
         setFieldErrors([{ field: 'form', message: 'No se pudo iniciar sesión.' }]);
       }
     }
@@ -59,51 +58,56 @@ export function LoginPage() {
 
   return (
     <main className="page auth-page">
+      <p className="brand-kicker">
+        Fintech <span>Core</span>
+      </p>
       <h1>Iniciar sesión</h1>
-      <p className="lede">Accede con el correo y contraseña registrados.</p>
+      <p className="lede">Entra con tu correo registrado para operar tus cuentas.</p>
 
-      <form className="auth-form" onSubmit={(event) => void handleSubmit(event)} noValidate>
-        <label className="field">
-          <span>Correo</span>
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            value={email}
-            disabled={submitting}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          {errorFor('email') !== undefined ? (
-            <span className="field-error">{errorFor('email')}</span>
+      <div className="auth-shell">
+        <form className="auth-form" onSubmit={(event) => void handleSubmit(event)} noValidate>
+          <label className="field">
+            <span>Correo</span>
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              value={email}
+              disabled={submitting}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            {errorFor('email') !== undefined ? (
+              <span className="field-error">{errorFor('email')}</span>
+            ) : null}
+          </label>
+
+          <label className="field">
+            <span>Contraseña</span>
+            <input
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              value={password}
+              disabled={submitting}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            {errorFor('password') !== undefined ? (
+              <span className="field-error">{errorFor('password')}</span>
+            ) : null}
+          </label>
+
+          {loginError !== null ? (
+            <div className="banner banner--error" role="alert">
+              <strong>{loginError.code}</strong>
+              <span>{loginError.message}</span>
+            </div>
           ) : null}
-        </label>
 
-        <label className="field">
-          <span>Contraseña</span>
-          <input
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            value={password}
-            disabled={submitting}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          {errorFor('password') !== undefined ? (
-            <span className="field-error">{errorFor('password')}</span>
-          ) : null}
-        </label>
-
-        {loginError !== null ? (
-          <div className="banner banner--error" role="alert">
-            <strong>{loginError.code}</strong>
-            <span>{loginError.message}</span>
-          </div>
-        ) : null}
-
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Entrando…' : 'Entrar'}
-        </button>
-      </form>
+          <button type="submit" disabled={submitting}>
+            {submitting ? 'Entrando…' : 'Entrar'}
+          </button>
+        </form>
+      </div>
 
       <p className="auth-switch">
         ¿No tienes cuenta? <Link to="/register">Regístrate</Link>

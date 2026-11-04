@@ -18,11 +18,10 @@ export function DashboardSummary({
   return (
     <header className="dashboard-summary">
       <div>
-        <h1>Dashboard</h1>
+        <p className="brand-inline">Fintech Core</p>
+        <h1>Operaciones</h1>
         <p className="lede">
-          {user !== null
-            ? `${user.fullName} · ${user.email}`
-            : 'Sesión autenticada'}
+          {user !== null ? `${user.fullName} · ${user.email}` : 'Sesión autenticada'}
           {' · '}
           {accountCount} cuenta{accountCount === 1 ? '' : 's'}
         </p>

@@ -64,72 +64,77 @@ export function RegisterPage() {
 
   return (
     <main className="page auth-page">
+      <p className="brand-kicker">
+        Fintech <span>Core</span>
+      </p>
       <h1>Registro</h1>
       <p className="lede">Crea tu usuario. El registro no inicia sesión automáticamente.</p>
 
-      <form className="auth-form" onSubmit={(event) => void handleSubmit(event)} noValidate>
-        <label className="field">
-          <span>Nombre completo</span>
-          <input
-            type="text"
-            name="name"
-            autoComplete="name"
-            value={name}
-            disabled={submitting}
-            onChange={(event) => setName(event.target.value)}
-          />
-          {errorFor('name') !== undefined ? (
-            <span className="field-error">{errorFor('name')}</span>
+      <div className="auth-shell">
+        <form className="auth-form" onSubmit={(event) => void handleSubmit(event)} noValidate>
+          <label className="field">
+            <span>Nombre completo</span>
+            <input
+              type="text"
+              name="name"
+              autoComplete="name"
+              value={name}
+              disabled={submitting}
+              onChange={(event) => setName(event.target.value)}
+            />
+            {errorFor('name') !== undefined ? (
+              <span className="field-error">{errorFor('name')}</span>
+            ) : null}
+          </label>
+
+          <label className="field">
+            <span>Correo</span>
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              value={email}
+              disabled={submitting}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            {errorFor('email') !== undefined ? (
+              <span className="field-error">{errorFor('email')}</span>
+            ) : null}
+          </label>
+
+          <label className="field">
+            <span>Contraseña</span>
+            <input
+              type="password"
+              name="password"
+              autoComplete="new-password"
+              value={password}
+              disabled={submitting}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            {errorFor('password') !== undefined ? (
+              <span className="field-error">{errorFor('password')}</span>
+            ) : null}
+          </label>
+
+          {registerError !== null ? (
+            <div className="banner banner--error" role="alert">
+              <strong>{registerError.code}</strong>
+              <span>{registerError.message}</span>
+            </div>
           ) : null}
-        </label>
 
-        <label className="field">
-          <span>Correo</span>
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            value={email}
-            disabled={submitting}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          {errorFor('email') !== undefined ? (
-            <span className="field-error">{errorFor('email')}</span>
+          {successMessage !== null ? (
+            <div className="banner banner--success" role="status">
+              {successMessage}
+            </div>
           ) : null}
-        </label>
 
-        <label className="field">
-          <span>Contraseña</span>
-          <input
-            type="password"
-            name="password"
-            autoComplete="new-password"
-            value={password}
-            disabled={submitting}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          {errorFor('password') !== undefined ? (
-            <span className="field-error">{errorFor('password')}</span>
-          ) : null}
-        </label>
-
-        {registerError !== null ? (
-          <div className="banner banner--error" role="alert">
-            <strong>{registerError.code}</strong>
-            <span>{registerError.message}</span>
-          </div>
-        ) : null}
-
-        {successMessage !== null ? (
-          <div className="banner banner--success" role="status">
-            {successMessage}
-          </div>
-        ) : null}
-
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Registrando…' : 'Crear cuenta'}
-        </button>
-      </form>
+          <button type="submit" disabled={submitting}>
+            {submitting ? 'Registrando…' : 'Crear cuenta'}
+          </button>
+        </form>
+      </div>
 
       <p className="auth-switch">
         ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>

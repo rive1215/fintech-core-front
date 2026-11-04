@@ -11,8 +11,10 @@ export function AuthGuard() {
 
   if (status === 'unknown') {
     return (
-      <div className="page page--center" role="status" aria-live="polite">
+      <div className="page page--center session-restore" role="status" aria-live="polite">
+        <p className="session-restore__mark">Fintech Core</p>
         <p>Restaurando sesión…</p>
+        <div className="session-restore__bar" aria-hidden="true" />
       </div>
     );
   }

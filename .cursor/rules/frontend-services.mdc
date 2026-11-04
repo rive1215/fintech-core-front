@@ -1,0 +1,39 @@
+---
+description: Servicios, adaptadores HTTP y application layer — sin React; contratos del backend real.
+globs: src/infrastructure/**/*.ts,src/application/**/*.ts,src/domain/**/*.ts,**/*.{test,spec}.ts
+alwaysApply: false
+---
+
+# Frontend Services / Application / Infrastructure
+
+Referencias: `docs/frontend/backend-contract.md`, `docs/frontend/frontend-architecture.md`, `docs/frontend/frontend-validation.md`.
+
+## Sin React
+
+Archivos bajo `application`, `domain` e `infrastructure` **no** importan `react` ni APIs del DOM de UI. Token persistence solo vía port `TokenStore` implementado en infrastructure (**[PENDIENTE]** session vs local vs memoria — no asumir sin decisión explícita).
+
+## Contratos HTTP
+
+- Implementar **únicamente** operaciones listadas en `docs/frontend/backend-contract.md`.
+- Envelope éxito: `{ status: 'success', data }` (+ `message` en transfer/deposit/withdrawal).
+- Envelope fallo: `{ status: 'fail'|'error', code, message, errors? }`.
+- Rutas protegidas: header `Authorization: Bearer <accessToken>` en el HttpClient/adaptador, no en use cases de dominio.
+- `POST /api/accounts`: body solo `{ initialBalance?: number }`; nunca `userId`.
+
+## Use cases FE
+
+Un use case por operación documentada (Register, Login, List/Create/GetBalance/Freeze/Unfreeze, Transfer, Deposit, Withdrawal, History). Dependen de ports (`AuthApi`, `AccountApi`, `TransactionApi`, `TokenStore`), no de Axios concreto.
+
+## Errores y tipos
+
+- Mapear por `code` documentado (`VALIDATION_ERROR`, `INSUFFICIENT_FUNDS`, `ACCOUNT_FROZEN`, …). Códigos no listados → tratar genérico / `[PENDIENTE]`, no inventar semántica.
+- TypeScript estricto; evitar `any`.
+- **[PENDIENTE]** wire format de `balance` (Decimal): tipar de forma defensiva hasta confirmar runtime.
+
+## No replicar motor financiero
+
+No simular ledger, no “corregir” saldos en cliente como fuente de verdad, no añadir ownership server-side inventado. Prechecks UX están en validation/workflows docs.
+
+## Tests
+
+Unit de use cases con fakes de ports; tests de adaptadores con fixtures del envelope real. Sin inventar campos en fixtures.

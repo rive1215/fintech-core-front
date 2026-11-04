@@ -1,0 +1,50 @@
+---
+description: Principios globales Clean Architecture del frontend Fintech Core. Aplica a toda implementación FE.
+alwaysApply: true
+---
+
+# Frontend Architecture (global)
+
+Fuente de verdad: `docs/frontend/backend-contract.md`, `docs/frontend/frontend-architecture.md`, `docs/frontend/frontend-state.md`, `docs/frontend/frontend-workflows.md`, `docs/frontend/frontend-validation.md`.
+
+## Capas (Dependency Rule)
+
+```
+presentation → application → domain
+infrastructure implementa ports de application; composition root cablea todo
+```
+
+Capas esperadas: `src/domain`, `src/application`, `src/infrastructure`, `src/presentation`.
+
+- UI/hooks **no** importan Axios/fetch crudo, JWT, ni `localStorage`/`sessionStorage`.
+- Application/domain **sin** React (`react`, JSX, hooks).
+- Infrastructure **sin** React; único lugar de HTTP, token store y mapeo de envelopes.
+- Tipos/contratos solo desde `backend-contract.md` + símbolos backend citados allí.
+
+## Contratos
+
+- **Prohibido** inventar endpoints, DTOs, propiedades, query params o códigos HTTP.
+- Si un doc base afirma algo sin archivo/símbolo fuente → tratarlo como `[PENDIENTE]`, no como regla dura.
+- No repetir el catálogo de rutas aquí: consultar `docs/frontend/backend-contract.md`.
+
+## Estado
+
+Separar siempre: estado local de formulario, sesión global (`accessToken` + user), estado remoto (cuentas/historial). Ver `docs/frontend/frontend-state.md`.
+
+## Finanzas y validación
+
+- **No** reimplementar reglas financieras del backend (saldos, atomicidad, ownership server-side).
+- UI puede **prevalidar** y deshabilitar acciones según `docs/frontend/frontend-validation.md` y workflows; el servidor es autoridad.
+- Mapear errores por `code` del API, no solo por mensaje.
+
+## TypeScript
+
+- Estricto; `any` solo con comentario de justificación en la misma línea o bloque.
+- Preferir tipos derivados de los DTO documentados.
+
+## Ejemplo
+
+```ts
+// ❌ presentation llama fetch + localStorage
+// ✅ presentation → hook → application use case → port; infrastructure HttpClient + TokenStore
+```

@@ -1,0 +1,44 @@
+---
+description: Patrones React/UI para presentation — sin I/O ni secretos en componentes.
+globs: src/presentation/**/*.{ts,tsx},src/**/*.{tsx,jsx},**/*.{test,spec}.{tsx,jsx}
+alwaysApply: false
+---
+
+# Frontend React / Presentation
+
+Referencias: `docs/frontend/frontend-architecture.md`, `docs/frontend/frontend-state.md`, `docs/frontend/frontend-workflows.md`, `docs/frontend/frontend-validation.md`.
+
+## Límites del componente
+
+- Componentes **presentacionales o de página**: sin Axios, sin `fetch` directo, sin JWT, sin `localStorage`/`sessionStorage`.
+- Orquestación vía hooks de presentation que llaman application use cases inyectados.
+- No hardcodear URLs `/api/...` en JSX.
+
+## Estados de UI obligatorios
+
+Para listas y mutaciones remotas, modelar y renderizar: **loading**, **error**, **empty**, **success**.
+
+```tsx
+// ✅
+if (status === 'loading') return <Spinner />;
+if (status === 'error') return <ErrorBanner code={error.code} />;
+if (status === 'success' && items.length === 0) return <EmptyState />;
+```
+
+## Sesión y datos
+
+- Sesión global ≠ estado de formulario ≠ cache de cuentas/historial.
+- Tras 401 `UNAUTHORIZED` / `INVALID_TOKEN`: el flujo de sesión limpia y redirige (ver workflows); el componente no parsea el JWT.
+- Solo ofrecer `accountId` provenientes de `GET /api/accounts` en selectores (ownership UI). Cuenta `FROZEN`: deshabilitar depósito/retiro/transferencia origen.
+
+## Validación de formularios
+
+Aplicar reglas de `docs/frontend/frontend-validation.md` (espejo Zod auth/transacciones; create account solo `initialBalance?` ≥ 0; **nunca** enviar `userId` en body).
+
+- Register ≠ Login automático (register no emite token).
+- `confirmPassword` solo UX local; no enviarlo al API.
+- No inventar campos (`phone`, `otp`, `currency`, etc.).
+
+## Tests UI
+
+Probar estados loading/error/empty/success y que no haya I/O en el árbol del componente (mocks en boundary de application).
